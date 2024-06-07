@@ -42,70 +42,57 @@ public class PlayerControl : MonoBehaviour
     void Update()
     {
         groundcheck = Physics.Raycast(transform.position, Vector3.down, 2.5f, layer);
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        if (Time.timeScale > 0)
         {
-            starttouchposition = Input.GetTouch(0).position;
-        }
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
-        {
-            endtouchposition = Input.GetTouch(0).position;
-            direction = starttouchposition - endtouchposition;
-        }
-        if (direction.x <= -swipe)
-        {
-            Rightturn();
-        }
-        if (direction.x >= swipe)
-        {
-            Leftturn();
-        }
-        if (direction.y >= swipe)
-        {
-            Down();
-        }
-        if (direction.y <= -swipe)
-        {
-            Up();
-        }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            Leftturn();
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            Rightturn();
-        }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            Up();
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            Down();
-        }
-        if (lane == 0)
-        {
-            transform.position = new Vector3(-10f, transform.position.y, 0f);
-        }
-        else if (lane == 1)
-        {
-            transform.position = new Vector3(0f, transform.position.y, 0f);
-        }
-        else if (lane == 2)
-        {
-            transform.position = new Vector3(10f, transform.position.y, 0f);
-        }
-        else
-        {
-            Time.timeScale = 0f;
-        }
-        if (groundcheck)
-        {
-            ad.Pause();
-        }
-        else
-        {
-            ad.Play();
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                starttouchposition = Input.GetTouch(0).position;
+            }
+            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+            {
+                endtouchposition = Input.GetTouch(0).position;
+                direction = starttouchposition - endtouchposition;
+            }
+            if (direction.x <= -swipe)
+            {
+                Rightturn();
+            }
+            if (direction.x >= swipe)
+            {
+                Leftturn();
+            }
+            if (direction.y >= swipe)
+            {
+                Down();
+            }
+            if (direction.y <= -swipe)
+            {
+                Up();
+            }
+            if (lane == 0)
+            {
+                transform.position = new Vector3(-10f, transform.position.y, 0f);
+            }
+            else if (lane == 1)
+            {
+                transform.position = new Vector3(0f, transform.position.y, 0f);
+            }
+            else if (lane == 2)
+            {
+                transform.position = new Vector3(10f, transform.position.y, 0f);
+            }
+            else
+            {
+                Time.timeScale = 0f;
+            }
+            if (groundcheck)
+            {
+                ad.Pause();
+            }
+            else
+            {
+                ad.Play();
+            }
         }
     }
 
