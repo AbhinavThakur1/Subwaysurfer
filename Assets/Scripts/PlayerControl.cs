@@ -1,62 +1,80 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class PlayerControl : MonoBehaviour
 {
+    [SerializeField] LayerMask layer;
+    [SerializeField] AudioClip jumpclip;
+    [SerializeField] AudioClip crouch;
+    [SerializeField] EventSystem es;
+    public float swipe;
     Vector2 starttouchposition;
     Vector2 endtouchposition;
+    Vector2 direction;
+    AudioSource ad;
     Rigidbody rb;
-    public float jumpforce;
-    [SerializeField] LayerMask layer;
-    public bool groundcheck;
-    bool down;
-    bool up;
-    bool right;
-    bool left;
+    float jumpforce = 6;
+    bool groundcheck;
     int lane = 1;
 
     private void Start()
     {
+        if (PlayerPrefs.HasKey("Sensitivity"))
+        {
+            swipe = PlayerPrefs.GetFloat("Sensitivity");
+        }
+        else
+        {
+            swipe = 260f;
+        }
+        Input.multiTouchEnabled = false;
         Application.targetFrameRate = 60;
         rb = GetComponent<Rigidbody>();
+        ad = GetComponent<AudioSource>();
     }
 
     void Update()
     {
-        groundcheck = Physics.Raycast(transform.position, Vector3.down, 1.8f, layer);
+        groundcheck = Physics.Raycast(transform.position, Vector3.down, 2.5f, layer);
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             starttouchposition = Input.GetTouch(0).position;
         }
-        if(Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
         {
             endtouchposition = Input.GetTouch(0).position;
+            direction = starttouchposition - endtouchposition;
         }
-        if (starttouchposition.x > endtouchposition.x)
-        {
-            Leftturn();
-        }
-        else if(starttouchposition.x < endtouchposition.x)
+        if (direction.x <= -swipe)
         {
             Rightturn();
         }
-        if (starttouchposition.y > endtouchposition.y)
+        if (direction.x >= swipe)
         {
-            Up();
+            Leftturn();
         }
-        else if(starttouchposition.y < endtouchposition.y)
+        if (direction.y >= swipe)
         {
             Down();
+        }
+        if (direction.y <= -swipe)
+        {
+            Up();
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             Leftturn();
         }
-        if(Input.GetKeyDown(KeyCode.RightArrow)) 
+        if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             Rightturn();
-        } 
+        }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             Up();
@@ -68,10 +86,12 @@ public class PlayerControl : MonoBehaviour
         if (lane == 0)
         {
             transform.position = new Vector3(-10f, transform.position.y, 0f);
-        }else if(lane == 1)
+        }
+        else if (lane == 1)
         {
             transform.position = new Vector3(0f, transform.position.y, 0f);
-        }else if (lane == 2)
+        }
+        else if (lane == 2)
         {
             transform.position = new Vector3(10f, transform.position.y, 0f);
         }
@@ -79,51 +99,78 @@ public class PlayerControl : MonoBehaviour
         {
             Time.timeScale = 0f;
         }
+        if (groundcheck)
+        {
+            ad.Pause();
+        }
+        else
+        {
+            ad.Play();
+        }
     }
 
     public void Leftturn()
     {
+
         lane -= 1;
         transform.rotation = Quaternion.Euler(0f, -60f, 0f);
         Invoke("Backtonormalrotation", 0.6f);
+        direction = Vector2.zero;
+
     }
 
     public void Rightturn()
     {
+
         lane += 1;
         transform.rotation = Quaternion.Euler(0f, 60f, 0f);
         Invoke("Backtonormalrotation", 0.6f);
+        direction = Vector2.zero;
+
     }
 
     public void Up()
     {
+
         if (groundcheck)
         {
+            ad.PlayOneShot(jumpclip);
             rb.AddForce(Vector3.up * jumpforce * 10f, ForceMode.Impulse);
+            transform.localScale = new Vector3(1f, 1f, 1f);
         }
+        direction = Vector2.zero;
+
     }
 
     public void Down()
     {
+
         if (groundcheck)
         {
-            transform.localScale.Set(1f, 0.5f, 1f);
-            Invoke("Backtonormalscale", 5f);
+            ad.PlayOneShot(crouch);
+            transform.localScale = new Vector3(1f, 0.5f, 1f);
+            Invoke("Backtonormalscale", 2f);
         }
         else
         {
             rb.AddForce(Vector3.down * jumpforce * 10f, ForceMode.Impulse);
         }
+        direction = Vector2.zero;
+
     }
 
     void Backtonormalscale()
     {
-        transform.localScale.Set(1f, 1f, 1f);
+
+        transform.localScale = new Vector3(1f,1f,1f);
+
     }
 
     void Backtonormalrotation()
     {
+
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+
     }
 
 }
