@@ -141,6 +141,7 @@ public class ObjectDestroy : MonoBehaviour
 
     public void Restart()
     {
+        PlayerPrefs.SetInt("Coins", PlayerPrefs.GetInt("Coins") + coins);
         SceneManager.LoadScene(1);
         Time.timeScale = 1;
     }
