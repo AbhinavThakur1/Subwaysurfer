@@ -94,6 +94,13 @@ public class PlayerControl : MonoBehaviour
                 ad.Play();
             }
         }
+        else
+        {
+            starttouchposition = Vector2.zero;
+            endtouchposition = Vector2.zero;
+            direction = Vector2.zero;
+            swipe = PlayerPrefs.GetFloat("Sensitivity");
+        }
     }
 
     public void Leftturn()

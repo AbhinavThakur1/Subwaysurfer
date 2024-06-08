@@ -23,7 +23,6 @@ public class ObjectDestroy : MonoBehaviour
     [SerializeField] AudioSource musicsource;
     [SerializeField] Slider sfxvolumeslider;
     [SerializeField] AudioSource sfxsource;
-    public bool pause;
     AudioSource coinAudioSource;
     float timepassed;
     public float speed;
@@ -33,8 +32,8 @@ public class ObjectDestroy : MonoBehaviour
     private void Start()
     {
 
+        Time.timeScale = 1;
         coinAudioSource = GetComponent<AudioSource>();
-
         if (PlayerPrefs.HasKey("Sensitivity"))
         {
             sensitivityslider.value = PlayerPrefs.GetFloat("Sensitivity");
@@ -109,7 +108,7 @@ public class ObjectDestroy : MonoBehaviour
                 }
             }
         }
-        if(Time.timeScale == 0 && !pause)
+        if(Time.timeScale == 0 && !playtimepause.activeSelf)
         {
             playtime.SetActive(false);
             playtimerestart.SetActive(true);
@@ -143,7 +142,6 @@ public class ObjectDestroy : MonoBehaviour
     {
         PlayerPrefs.SetInt("Coins", PlayerPrefs.GetInt("Coins") + coins);
         SceneManager.LoadScene(1);
-        Time.timeScale = 1;
     }
 
     public void MainMenu()
@@ -161,10 +159,9 @@ public class ObjectDestroy : MonoBehaviour
 
     public void Resume()
     {
-        Time.timeScale = 1;
         playtime.SetActive(true);
         playtimepause.SetActive(false);
-        pause = false;
+        Time.timeScale = 1;
     }
 
     public void Pause()
@@ -172,7 +169,6 @@ public class ObjectDestroy : MonoBehaviour
         playtime.SetActive(false);
         playtimepause.SetActive(true);
         Time.timeScale = 0;
-        pause = true;
     }
 
     public void Coinuse()
