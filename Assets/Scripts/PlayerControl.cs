@@ -12,7 +12,6 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] LayerMask layer;
     [SerializeField] AudioClip jumpclip;
     [SerializeField] AudioClip crouch;
-    [SerializeField] EventSystem es;
     public float swipe;
     Vector2 starttouchposition;
     Vector2 endtouchposition;
@@ -93,13 +92,22 @@ public class PlayerControl : MonoBehaviour
             {
                 ad.Play();
             }
-        }
-        else
-        {
-            starttouchposition = Vector2.zero;
-            endtouchposition = Vector2.zero;
-            direction = Vector2.zero;
-            swipe = PlayerPrefs.GetFloat("Sensitivity");
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                Leftturn();
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                Rightturn();
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                Up();
+            }
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                Down();
+            }
         }
     }
 
